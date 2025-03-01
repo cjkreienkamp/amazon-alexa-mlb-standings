@@ -7,54 +7,56 @@
 
 import urllib.request, urllib.parse, urllib.error
 from bs4 import BeautifulSoup
-import ssl
-from datetime import datetime
-import re
+#import ssl
+#from datetime import datetime
+#import re
 from tabulate import tabulate
-
+   
 # Ignore SSL certificate errors
-ctx = ssl.create_default_context()
-ctx.check_hostname = False
-ctx.verify_mode = ssl.CERT_NONE
-
-
-
+#ctx = ssl.create_default_context()
+#ctx.check_hostname = False
+#ctx.verify_mode = ssl.CERT_NONE
+   
 # URL 1
-#url1 = 'https://howmanydaysuntil.center/mlb-opening-day/'
-#html1 = urllib.request.urlopen(url1, context=ctx).read()
-#soup1 = BeautifulSoup(html1, 'html.parser')
-#
-#dayhour = soup1.find('span', class_='dhcountdown').text
-#dayhour = dayhour.split()
-#days = int(dayhour[0])
-#hours = int(dayhour[2])
-#if hours > 0:
-#    days = days + 1
-#print(days,'days until MLB opening day')
+url1 = 'https://howmanydaysuntil.center/mlb-opening-day/'
+html1 = urllib.request.urlopen(url1).read()
+soup1 = BeautifulSoup(html1, 'html.parser')
 
-
-
+dayhour = soup1.find('span', class_='dhcountdown').text
+dayhour = dayhour.split()
+days = int(dayhour[0])
+hours = int(dayhour[2])
+if hours > 0:
+    days = days + 1
+print(days,'days until MLB opening day')
+    
+    
+    
 # URL 2
 host2 = 'https://www.baseball-reference.com/boxes/?'
-year = datetime.today().year
-month = datetime.today().month
-day = datetime.today().day
-
+year = 2020
+month = 5
+day = 31
+#year = datetime.today().year
+#month = datetime.today().month
+#day = datetime.today().day
+    
 url2 = host2 + f'month={month}&day={day}&year={year}'
 try:
-    html2 = urllib.request.urlopen(url2, context=ctx)
+    html2 = urllib.request.urlopen(url2)
 except:
     url2 = host2 + f'month=10&day=30&year=2019'
     html2 = urllib.request.urlopen(url2, context=ctx)
 soup2 = BeautifulSoup(html2.read(), 'html.parser')
-
+  
 ALEast = ['NYY','TBR','BOS','TOR','BAL']
 ALCentral = ['MIN','CLE','CHW','KCR','DET']
 ALWest = ['HOU','OAK','TEX','LAA','SEA']
 NLEast = ['ATL','WSN','NYM','PHI','MIA']
 NLCentral = ['STL','MIL','CHC','CIN','PIT']
 NLWest = ['LAD','ARI','SFG','COL','SDP']
-teamInput = input('Input a 3 letter team name: ')
+#teamInput = input('Input a 3 letter team name: ')
+teamInput = 'STL'
 if teamInput in ALEast: division = 'AL East Division'
 elif teamInput in ALCentral: division = 'AL Central Division'
 elif teamInput in ALWest: division = 'AL West Division'
@@ -69,7 +71,7 @@ for divisions in soup2.find_all('div', class_='table_wrapper'):
     if division == divisions.find('div', class_='section_heading').h2.text:
         attribute = divisions['id']
         break
-    
+        
 mydata = list()
 team = dict()
 for teams in soup2.find( attrs = {'id':attribute} ).tbody.find_all('tr'):
